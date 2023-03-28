@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zijinge.blogapi.mapper.TagMapper">
+
+<!--    List<Tag> findTagByArticleId(long articleId);-->
+    <select id="findTagByArticleId" parameterType="long" resultType="com.zijinge.blogapi.pojo.Tag">
+            select id,avatar,tag_name as tagName from ms_tag where id in
+            (
+            select tag_id from ms_article_tag where article_id = #{articleId}
+            )
+    </select>
+
+<!--    List<Long> findHotsTagId(int limit);  -->
+    <select id="findHotsTagId" parameterType="int" resultType="java.lang.Long">
+        select  tag_id from ms_article_tag group by tag_id order by count(*) desc limit #{limit}
+    </select>
+
+<!--    List<Tag> findTagsByTagIds(List<Long> tagIdList);   -->
+    <select id="findTagsByTagIds" parameterType="list" resultType="com.zijinge.blogapi.pojo.Tag">
+        select id,tag_name as tagName from ms_tag where id in
+            <foreach collection="tagIds" item="tagId" separator="," open="(" close=")">
+                #{tagId}
+            </foreach>
+<!--      foreach  循环遍历取出id集合的单个id进行查询  -->
+    </select>
+</mapper>
